@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Secuencia;
+use App\Models\Trabajador;
 use Illuminate\Http\Request;
 
-class SecuenciaController extends Controller
+class TrabajadorController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +34,7 @@ class SecuenciaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Secuencia $secuencia)
+    public function show(Trabajador $trabajador)
     {
         //
     }
@@ -42,7 +42,7 @@ class SecuenciaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Secuencia $secuencia)
+    public function edit(Trabajador $trabajador)
     {
         //
     }
@@ -50,7 +50,7 @@ class SecuenciaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Secuencia $secuencia)
+    public function update(Request $request, Trabajador $trabajador)
     {
         //
     }
@@ -58,7 +58,7 @@ class SecuenciaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Secuencia $secuencia)
+    public function destroy(Trabajador $trabajador)
     {
         //
     }
