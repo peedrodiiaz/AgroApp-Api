@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Trabajador;
+use App\Models\Maquina;
 use Illuminate\Http\Request;
 
 class TrabajadorController extends Controller
@@ -34,7 +34,7 @@ class TrabajadorController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Trabajador $trabajador)
+    public function show(Maquina $maquina)
     {
         //
     }
@@ -42,7 +42,7 @@ class TrabajadorController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Trabajador $trabajador)
+    public function edit(Maquina $maquina)
     {
         //
     }
@@ -50,7 +50,7 @@ class TrabajadorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Trabajador $trabajador)
+    public function update(Request $request, Maquina $maquina)
     {
         //
     }
@@ -58,7 +58,7 @@ class TrabajadorController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Trabajador $trabajador)
+    public function destroy(Maquina $maquina)
     {
         //
     }
