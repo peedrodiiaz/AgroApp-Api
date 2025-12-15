@@ -9,13 +9,15 @@ use App\Http\Controllers\IncidenciaController;
 use App\Http\Controllers\AsignacionController;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
+    Route::apiResource('trabajadores', TrabajadorController::class);
+    Route::apiResource('maquinas', MaquinaController::class);
+    Route::apiResource('cronogramas', CronogramaController::class);
+    Route::apiResource('incidencias', IncidenciaController::class);
+    Route::apiResource('asignaciones', AsignacionController::class);
     return $request->user();
+
 });
 
-Route::apiResource('trabajadores', TrabajadorController::class);
-Route::apiResource('maquinas', MaquinaController::class);
-Route::apiResource('cronogramas', CronogramaController::class);
-Route::apiResource('incidencias', IncidenciaController::class);
-Route::apiResource('asignaciones', AsignacionController::class);
 
-require __DIR__ . '/auth.php';
+
+
