@@ -16,18 +16,24 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): Response
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'usuario' => ['required', 'string'], // Cambiado de 'email' a 'usuario'
             'password' => ['required'],
         ]);
 
         if (! Auth::attempt($credentials)) {
-            return response(['message' => 'Invalid credentials'], 422);
+            return response([
+                'success' => false,
+                'message' => 'Credenciales inválidas'
+            ], 422);
         }
 
-        $token = $request->user()->createToken('api')->plainTextToken;
+        $user = $request->user();
+        $token = $user->createToken('api')->plainTextToken;
+        
         return response([
+            'success' => true,
             'token' => $token,
-            'user'  => $request->user(),
+            'user'  => $user,
         ], 200);
     }
 

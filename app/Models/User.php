@@ -20,6 +20,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'usuario', // Cambiado para coincidir con el frontend
         'email',
         'password',
     ];
@@ -45,5 +46,36 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get the name of the unique identifier for the user.
+     *
+     * @return string
+     */
+    public function getAuthIdentifierName()
+    {
+        return 'usuario'; // Usar 'usuario' en vez de 'email' para autenticación
+    }
+
+    /**
+     * Get the column name for the "username" (usado por Laravel Auth).
+     *
+     * @return string
+     */
+    public function username()
+    {
+        return 'usuario';
+    }
+
+    /**
+     * Get the name of the "username" column for authentication.
+     * Este método es usado por Auth::attempt
+     *
+     * @return string
+     */
+    public static function getUsernameColumn()
+    {
+        return 'usuario';
     }
 }
