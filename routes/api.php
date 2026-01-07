@@ -11,7 +11,7 @@ use App\Http\Controllers\IncidenciaController;
 use App\Http\Controllers\AsignacionController;
 use App\Http\Controllers\TestController;
 
-
+// Rutas públicas de autenticación
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 
@@ -19,13 +19,11 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 Route::get('/test-users', [TestController::class, 'testUsers']);
 Route::post('/test-login', [TestController::class, 'testLogin']);
 
-
+// Rutas protegidas con autenticación
 Route::middleware('auth:sanctum')->group(function () {
     
-    // Logout
+    // Auth
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
-    
-    // Usuario autenticado
     Route::get('/user', function (Request $request) {
         return response()->json([
             'success' => true,
@@ -34,15 +32,22 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // Trabajadores
-    Route::get('trabajadores/stats', [TrabajadorController::class, 'stats']);
+    Route::get('/trabajadores/stats', [TrabajadorController::class, 'stats']);
     Route::apiResource('trabajadores', TrabajadorController::class);
     
     // Máquinas
-    Route::get('maquinas/stats', [MaquinaController::class, 'stats']);
-    Route::patch('maquinas/{id}/estado', [MaquinaController::class, 'cambiarEstado']);
+    Route::get('/maquinas/stats', [MaquinaController::class, 'stats']);
+    Route::patch('/maquinas/{id}/estado', [MaquinaController::class, 'cambiarEstado']);
     Route::apiResource('maquinas', MaquinaController::class);
     
+    // Cronogramas
     Route::apiResource('cronogramas', CronogramaController::class);
+    
+    // Incidencias
+    Route::get('/incidencias/stats', [IncidenciaController::class, 'stats']);
     Route::apiResource('incidencias', IncidenciaController::class);
+    
+    // Asignaciones
+    Route::get('/asignaciones/stats', [AsignacionController::class, 'stats']);
     Route::apiResource('asignaciones', AsignacionController::class);
 });

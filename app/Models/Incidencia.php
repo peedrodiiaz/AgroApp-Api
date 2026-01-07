@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Incidencia extends Model
 {
@@ -26,12 +27,12 @@ class Incidencia extends Model
     ];
 
     // Relaciones
-    public function maquina()
+    public function maquina(): BelongsTo
     {
         return $this->belongsTo(Maquina::class);
     }
 
-    public function trabajador()
+    public function trabajador(): BelongsTo
     {
         return $this->belongsTo(Trabajador::class);
     }

@@ -11,13 +11,38 @@ class IncidenciaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $incidencias = Incidencia::with(['maquina', 'trabajador'])
-                ->orderBy('created_at', 'desc')
-                ->get();
-            
+            $query = Incidencia::with(['maquina', 'trabajador']);
+
+            // Filtros opcionales
+            if ($request->has('estado')) {
+                $query->where('estado', $request->estado);
+            }
+
+            if ($request->has('prioridad')) {
+                $query->where('prioridad', $request->prioridad);
+            }
+
+            if ($request->has('maquina_id')) {
+                $query->where('maquina_id', $request->maquina_id);
+            }
+
+            if ($request->has('trabajador_id')) {
+                $query->where('trabajador_id', $request->trabajador_id);
+            }
+
+            if ($request->has('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('titulo', 'like', "%{$search}%")
+                        ->orWhere('descripcion', 'like', "%{$search}%");
+                });
+            }
+
+            $incidencias = $query->orderBy('fechaApertura', 'desc')->paginate($request->per_page ?? 15);
+
             return response()->json([
                 'success' => true,
                 'data' => $incidencias
@@ -40,10 +65,10 @@ class IncidenciaController extends Controller
             $validator = Validator::make($request->all(), [
                 'titulo' => 'required|string|max:255',
                 'descripcion' => 'required|string',
-                'estado' => 'sometimes|in:abierta,en_progreso,resuelta',
-                'prioridad' => 'sometimes|in:baja,media,alta',
+                'estado' => 'nullable|in:abierta,en_progreso,resuelta',
+                'prioridad' => 'nullable|in:baja,media,alta',
                 'fechaApertura' => 'required|date',
-                'fechaCierre' => 'nullable|date',
+                'fechaCierre' => 'nullable|date|after_or_equal:fechaApertura',
                 'maquina_id' => 'required|exists:maquinas,id',
                 'trabajador_id' => 'required|exists:trabajadors,id'
             ]);
@@ -79,8 +104,15 @@ class IncidenciaController extends Controller
     public function show($id)
     {
         try {
-            $incidencia = Incidencia::with(['maquina', 'trabajador'])->findOrFail($id);
-            
+            $incidencia = Incidencia::with(['maquina', 'trabajador'])->find($id);
+
+            if (!$incidencia) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Incidencia no encontrada'
+                ], 404);
+            }
+
             return response()->json([
                 'success' => true,
                 'data' => $incidencia
@@ -88,9 +120,9 @@ class IncidenciaController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Incidencia no encontrada',
+                'message' => 'Error al obtener incidencia',
                 'error' => $e->getMessage()
-            ], 404);
+            ], 500);
         }
     }
 
@@ -100,17 +132,24 @@ class IncidenciaController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $incidencia = Incidencia::findOrFail($id);
+            $incidencia = Incidencia::find($id);
+
+            if (!$incidencia) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Incidencia no encontrada'
+                ], 404);
+            }
 
             $validator = Validator::make($request->all(), [
-                'titulo' => 'sometimes|string|max:255',
-                'descripcion' => 'sometimes|string',
-                'estado' => 'sometimes|in:abierta,en_progreso,resuelta',
-                'prioridad' => 'sometimes|in:baja,media,alta',
-                'fechaApertura' => 'sometimes|date',
-                'fechaCierre' => 'nullable|date',
-                'maquina_id' => 'sometimes|exists:maquinas,id',
-                'trabajador_id' => 'sometimes|exists:trabajadors,id'
+                'titulo' => 'sometimes|required|string|max:255',
+                'descripcion' => 'sometimes|required|string',
+                'estado' => 'nullable|in:abierta,en_progreso,resuelta',
+                'prioridad' => 'nullable|in:baja,media,alta',
+                'fechaApertura' => 'sometimes|required|date',
+                'fechaCierre' => 'nullable|date|after_or_equal:fechaApertura',
+                'maquina_id' => 'sometimes|required|exists:maquinas,id',
+                'trabajador_id' => 'sometimes|required|exists:trabajadors,id'
             ]);
 
             if ($validator->fails()) {
@@ -144,7 +183,15 @@ class IncidenciaController extends Controller
     public function destroy($id)
     {
         try {
-            $incidencia = Incidencia::findOrFail($id);
+            $incidencia = Incidencia::find($id);
+
+            if (!$incidencia) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Incidencia no encontrada'
+                ], 404);
+            }
+
             $incidencia->delete();
 
             return response()->json([
@@ -155,6 +202,37 @@ class IncidenciaController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al eliminar incidencia',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get statistics
+     */
+    public function stats()
+    {
+        try {
+            $total = Incidencia::count();
+            $porEstado = Incidencia::selectRaw('estado, COUNT(*) as total')
+                ->groupBy('estado')
+                ->get();
+            $porPrioridad = Incidencia::selectRaw('prioridad, COUNT(*) as total')
+                ->groupBy('prioridad')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'total' => $total,
+                    'por_estado' => $porEstado,
+                    'por_prioridad' => $porPrioridad
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener estadísticas',
                 'error' => $e->getMessage()
             ], 500);
         }

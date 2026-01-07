@@ -11,11 +11,34 @@ class TrabajadorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $trabajadores = Trabajador::orderBy('created_at', 'desc')->get();
-            
+            $query = Trabajador::query();
+
+            // Filtros opcionales
+            if ($request->has('rol')) {
+                $query->where('rol', $request->rol);
+            }
+
+            if ($request->has('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('nombre', 'like', "%{$search}%")
+                        ->orWhere('apellido', 'like', "%{$search}%")
+                        ->orWhere('dni', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            }
+
+            // Incluir relaciones si se solicita
+            if ($request->has('with')) {
+                $with = explode(',', $request->with);
+                $query->with($with);
+            }
+
+            $trabajadores = $query->orderBy('created_at', 'desc')->paginate($request->per_page ?? 15);
+
             return response()->json([
                 'success' => true,
                 'data' => $trabajadores
@@ -40,10 +63,10 @@ class TrabajadorController extends Controller
             $validator = Validator::make($request->all(), [
                 'nombre' => 'required|string|max:255',
                 'apellido' => 'required|string|max:255',
-                'dni' => 'required|string|unique:trabajadors,dni',
+                'dni' => 'required|string|unique:trabajadors,dni|max:20',
                 'telefono' => 'nullable|string|max:20',
-                'email' => 'required|email|unique:trabajadors,email',
-                'rol' => 'required|string',
+                'email' => 'required|email|unique:trabajadors,email|max:255',
+                'rol' => 'nullable|string|max:50',
                 'fechaAlta' => 'required|date'
             ]);
 
@@ -83,8 +106,15 @@ class TrabajadorController extends Controller
     public function show($id)
     {
         try {
-            $trabajador = Trabajador::findOrFail($id);
-            
+            $trabajador = Trabajador::with(['cronogramas', 'incidencias', 'asignaciones'])->find($id);
+
+            if (!$trabajador) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Trabajador no encontrado'
+                ], 404);
+            }
+
             return response()->json([
                 'success' => true,
                 'data' => $trabajador
@@ -92,9 +122,9 @@ class TrabajadorController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Trabajador no encontrado',
+                'message' => 'Error al obtener trabajador',
                 'error' => $e->getMessage()
-            ], 404);
+            ], 500);
         }
     }
 
@@ -104,16 +134,23 @@ class TrabajadorController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $trabajador = Trabajador::findOrFail($id);
+            $trabajador = Trabajador::find($id);
+
+            if (!$trabajador) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Trabajador no encontrado'
+                ], 404);
+            }
 
             $validator = Validator::make($request->all(), [
-                'nombre' => 'sometimes|string|max:255',
-                'apellido' => 'sometimes|string|max:255',
-                'dni' => 'sometimes|string|unique:trabajadors,dni,' . $id,
+                'nombre' => 'sometimes|required|string|max:255',
+                'apellido' => 'sometimes|required|string|max:255',
+                'dni' => 'sometimes|required|string|max:20|unique:trabajadors,dni,' . $id,
                 'telefono' => 'nullable|string|max:20',
-                'email' => 'sometimes|email|unique:trabajadors,email,' . $id,
-                'rol' => 'sometimes|string',
-                'fechaAlta' => 'sometimes|date'
+                'email' => 'sometimes|required|email|max:255|unique:trabajadors,email,' . $id,
+                'rol' => 'nullable|string|max:50',
+                'fechaAlta' => 'sometimes|required|date'
             ]);
 
             if ($validator->fails()) {
@@ -146,7 +183,15 @@ class TrabajadorController extends Controller
     public function destroy($id)
     {
         try {
-            $trabajador = Trabajador::findOrFail($id);
+            $trabajador = Trabajador::find($id);
+
+            if (!$trabajador) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Trabajador no encontrado'
+                ], 404);
+            }
+
             $trabajador->delete();
 
             return response()->json([
@@ -169,8 +214,7 @@ class TrabajadorController extends Controller
     {
         try {
             $total = Trabajador::count();
-            $porRol = Trabajador::select('rol')
-                ->selectRaw('count(*) as total')
+            $porRol = Trabajador::selectRaw('rol, COUNT(*) as total')
                 ->groupBy('rol')
                 ->get();
 
