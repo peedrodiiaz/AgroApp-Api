@@ -1,53 +1,36 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
+require __DIR__ . '/auth.php';
+
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\TrabajadorController;
 use App\Http\Controllers\MaquinaController;
-use App\Http\Controllers\CronogramaController;
 use App\Http\Controllers\IncidenciaController;
 use App\Http\Controllers\AsignacionController;
-use App\Http\Controllers\TestController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
-// Rutas públicas de autenticación
-Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+Route::post('/register', [RegisteredUserController::class, 'store']);
 
-// Rutas de prueba para verificar usuarios y login
-Route::get('/test-users', [TestController::class, 'testUsers']);
-Route::post('/test-login', [TestController::class, 'testLogin']);
+Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
+    return $request->user();
+});
 
-// Rutas protegidas con autenticación
 Route::middleware('auth:sanctum')->group(function () {
-    
-    // Auth
-    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
-    Route::get('/user', function (Request $request) {
-        return response()->json([
-            'success' => true,
-            'data' => $request->user()
-        ]);
-    });
-
-    // Trabajadores
-    Route::get('/trabajadores/stats', [TrabajadorController::class, 'stats']);
     Route::apiResource('trabajadores', TrabajadorController::class);
-    
-    // Máquinas
-    Route::get('/maquinas/stats', [MaquinaController::class, 'stats']);
-    Route::patch('/maquinas/{id}/estado', [MaquinaController::class, 'cambiarEstado']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('maquinas', MaquinaController::class);
-    
-    // Cronogramas
-    Route::apiResource('cronogramas', CronogramaController::class);
-    
-    // Incidencias
-    Route::get('/incidencias/stats', [IncidenciaController::class, 'stats']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('incidencias', IncidenciaController::class);
-    
-    // Asignaciones
+});
+
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('/asignaciones/stats', [AsignacionController::class, 'stats']);
     Route::apiResource('asignaciones', AsignacionController::class);
 });
