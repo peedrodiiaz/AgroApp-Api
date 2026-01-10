@@ -31,7 +31,7 @@ class AsignacionController extends Controller
         if ($request->has('activas')) {
             $query->where(function($q) {
                 $q->whereNull('fechaFin')
-                  ->orWhere('fechaFin', '>=', now());
+                    ->orWhere('fechaFin', '>=', now());
             });
         }
 

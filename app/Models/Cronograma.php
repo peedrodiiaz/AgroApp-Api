@@ -10,15 +10,20 @@ class Cronograma extends Model
     protected $fillable = [
         'fechaInicio',
         'fechaFin',
+        'horaInicio',
+        'horaFin',
         'color',
         'descripcion',
+        'estado',
         'trabajador_id',
         'maquina_id'
     ];
 
     protected $casts = [
         'fechaInicio' => 'date',
-        'fechaFin' => 'date'
+        'fechaFin' => 'date',
+        'horaInicio' => 'datetime:H:i',
+        'horaFin' => 'datetime:H:i'
     ];
 
     // Relaciones

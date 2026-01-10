@@ -8,6 +8,7 @@ use App\Http\Controllers\TrabajadorController;
 use App\Http\Controllers\MaquinaController;
 use App\Http\Controllers\IncidenciaController;
 use App\Http\Controllers\AsignacionController;
+use App\Http\Controllers\CronogramaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +29,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('incidencias', IncidenciaController::class);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/cronogramas/disponibilidad', [CronogramaController::class, 'disponibilidad']);
+    Route::apiResource('cronogramas', CronogramaController::class);
 });
 
 Route::middleware('auth:sanctum')->group(function () {
