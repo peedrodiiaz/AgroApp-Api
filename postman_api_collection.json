@@ -1,0 +1,1256 @@
+{
+	"info": {
+		"_postman_id": "agroapp-api-2025",
+		"name": "AgroApp API - Completa",
+		"description": "Colección completa de endpoints para el panel de administración de AgroApp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"description": "Endpoints de autenticación y gestión de usuarios",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    let jsonData = pm.response.json();",
+									"    pm.environment.set(\"TOKEN\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Admin User\",\n    \"email\": \"admin@agroapp.com\",\n    \"password\": \"12345678\",\n    \"password_confirmation\": \"12345678\"\n}"
+						},
+						"url": {
+							"raw": "{{API_BASE_URL}}/register",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["register"]
+						},
+						"description": "Registrar un nuevo usuario en el sistema"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    let jsonData = pm.response.json();",
+									"    pm.environment.set(\"TOKEN\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@agroapp.com\",\n    \"password\": \"12345678\"\n}"
+						},
+						"url": {
+							"raw": "{{API_BASE_URL}}/login",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["login"]
+						},
+						"description": "Iniciar sesión y obtener token de autenticación"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE_URL}}/logout",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["logout"]
+						},
+						"description": "Cerrar sesión y revocar token"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE_URL}}/user",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["user"]
+						},
+						"description": "Obtener información del usuario autenticado"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Trabajadores",
+			"description": "CRUD completo de trabajadores",
+			"item": [
+				{
+					"name": "Listar Trabajadores",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE_URL}}/trabajadores?per_page=15",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["trabajadores"],
+							"query": [
+								{
+									"key": "per_page",
+									"value": "15",
+									"description": "Resultados por página"
+								},
+								{
+									"key": "rol",
+									"value": "trabajador",
+									"disabled": true,
+									"description": "Filtrar por rol"
+								},
+								{
+									"key": "search",
+									"value": "",
+									"disabled": true,
+									"description": "Buscar por nombre, apellido, DNI o email"
+								},
+								{
+									"key": "with",
+									"value": "cronogramas,incidencias",
+									"disabled": true,
+									"description": "Incluir relaciones"
+								}
+							]
+						},
+						"description": "Obtener listado paginado de trabajadores con filtros opcionales"
+					},
+					"response": []
+				},
+				{
+					"name": "Ver Trabajador",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE_URL}}/trabajadores/1",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["trabajadores", "1"]
+						},
+						"description": "Obtener detalles de un trabajador específico"
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Trabajador",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Juan\",\n    \"apellido\": \"Pérez\",\n    \"dni\": \"12345678A\",\n    \"telefono\": \"600123456\",\n    \"email\": \"juan.perez@agroapp.com\",\n    \"rol\": \"trabajador\",\n    \"fechaAlta\": \"2025-01-15\"\n}"
+						},
+						"url": {
+							"raw": "{{API_BASE_URL}}/trabajadores",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["trabajadores"]
+						},
+						"description": "Crear un nuevo trabajador"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Trabajador",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Juan Carlos\",\n    \"apellido\": \"Pérez García\",\n    \"telefono\": \"600123999\"\n}"
+						},
+						"url": {
+							"raw": "{{API_BASE_URL}}/trabajadores/1",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["trabajadores", "1"]
+						},
+						"description": "Actualizar información de un trabajador"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Trabajador",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE_URL}}/trabajadores/1",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["trabajadores", "1"]
+						},
+						"description": "Eliminar un trabajador del sistema"
+					},
+					"response": []
+				},
+				{
+					"name": "Estadísticas Trabajadores",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE_URL}}/trabajadores/stats",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["trabajadores", "stats"]
+						},
+						"description": "Obtener estadísticas de trabajadores"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Máquinas",
+			"description": "CRUD completo de máquinas agrícolas",
+			"item": [
+				{
+					"name": "Listar Máquinas",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE_URL}}/maquinas?per_page=15",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["maquinas"],
+							"query": [
+								{
+									"key": "per_page",
+									"value": "15"
+								},
+								{
+									"key": "tipo",
+									"value": "Tractor",
+									"disabled": true,
+									"description": "Filtrar por tipo (Tractor, Cosechadora, Empacadora)"
+								},
+								{
+									"key": "estado",
+									"value": "activa",
+									"disabled": true,
+									"description": "Filtrar por estado"
+								},
+								{
+									"key": "search",
+									"value": "",
+									"disabled": true,
+									"description": "Buscar por nombre, número de serie o modelo"
+								}
+							]
+						},
+						"description": "Obtener listado paginado de máquinas con filtros"
+					},
+					"response": []
+				},
+				{
+					"name": "Ver Máquina",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE_URL}}/maquinas/1",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["maquinas", "1"]
+						},
+						"description": "Obtener detalles de una máquina específica"
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Máquina - Tractor",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Tractor John Deere 5090E\",\n    \"imagen\": \"https://example.com/tractor.jpg\",\n    \"numSerie\": \"JD5090E-2025-001\",\n    \"modelo\": \"5090E\",\n    \"tipo\": \"Tractor\",\n    \"fechaCompra\": \"2025-01-10\",\n    \"estado\": \"activa\",\n    \"ubicacion\": \"Finca Norte\",\n    \"descripcion\": \"Tractor para labores generales\",\n    \"potenciaCv\": 90,\n    \"tipoCombustible\": \"Diésel\",\n    \"capacidadRemolque\": 3500\n}"
+						},
+						"url": {
+							"raw": "{{API_BASE_URL}}/maquinas",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["maquinas"]
+						},
+						"description": "Crear una nueva máquina tipo Tractor"
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Máquina - Cosechadora",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Cosechadora Case IH\",\n    \"numSerie\": \"CASE-2025-002\",\n    \"modelo\": \"Axial-Flow 250\",\n    \"tipo\": \"Cosechadora\",\n    \"fechaCompra\": \"2024-06-15\",\n    \"estado\": \"activa\",\n    \"ubicacion\": \"Finca Sur\",\n    \"descripcion\": \"Cosechadora para cereales\",\n    \"tipoCultivo\": \"Trigo, Cebada\",\n    \"anchoCorte\": \"7.6m\",\n    \"capacidadTolva\": 10500\n}"
+						},
+						"url": {
+							"raw": "{{API_BASE_URL}}/maquinas",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["maquinas"]
+						},
+						"description": "Crear una nueva máquina tipo Cosechadora"
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Máquina - Empacadora",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Empacadora New Holland\",\n    \"numSerie\": \"NH-2025-003\",\n    \"modelo\": \"BR6090\",\n    \"tipo\": \"Empacadora\",\n    \"fechaCompra\": \"2024-08-20\",\n    \"estado\": \"activa\",\n    \"ubicacion\": \"Finca Este\",\n    \"descripcion\": \"Empacadora de pacas redondas\",\n    \"tipoBala\": \"Redonda\",\n    \"capacidadEmpaque\": 80\n}"
+						},
+						"url": {
+							"raw": "{{API_BASE_URL}}/maquinas",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["maquinas"]
+						},
+						"description": "Crear una nueva máquina tipo Empacadora"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Máquina",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ubicacion\": \"Finca Centro\",\n    \"descripcion\": \"Tractor actualizado\"\n}"
+						},
+						"url": {
+							"raw": "{{API_BASE_URL}}/maquinas/1",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["maquinas", "1"]
+						},
+						"description": "Actualizar información de una máquina"
+					},
+					"response": []
+				},
+				{
+					"name": "Cambiar Estado Máquina",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"estado\": \"mantenimiento\"\n}"
+						},
+						"url": {
+							"raw": "{{API_BASE_URL}}/maquinas/1/estado",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["maquinas", "1", "estado"]
+						},
+						"description": "Cambiar el estado de una máquina (activa, inactiva, mantenimiento)"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Máquina",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE_URL}}/maquinas/1",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["maquinas", "1"]
+						},
+						"description": "Eliminar una máquina del sistema"
+					},
+					"response": []
+				},
+				{
+					"name": "Estadísticas Máquinas",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE_URL}}/maquinas/stats",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["maquinas", "stats"]
+						},
+						"description": "Obtener estadísticas de máquinas por tipo y estado"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cronogramas",
+			"description": "CRUD de cronogramas de trabajo",
+			"item": [
+				{
+					"name": "Listar Cronogramas",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE_URL}}/cronogramas?per_page=15",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["cronogramas"],
+							"query": [
+								{
+									"key": "per_page",
+									"value": "15"
+								},
+								{
+									"key": "trabajador_id",
+									"value": "1",
+									"disabled": true,
+									"description": "Filtrar por trabajador"
+								},
+								{
+									"key": "maquina_id",
+									"value": "1",
+									"disabled": true,
+									"description": "Filtrar por máquina"
+								},
+								{
+									"key": "fecha_inicio",
+									"value": "2025-01-01",
+									"disabled": true
+								},
+								{
+									"key": "fecha_fin",
+									"value": "2025-12-31",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Obtener listado paginado de cronogramas"
+					},
+					"response": []
+				},
+				{
+					"name": "Ver Cronograma",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE_URL}}/cronogramas/1",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["cronogramas", "1"]
+						},
+						"description": "Obtener detalles de un cronograma específico"
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Cronograma",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fechaInicio\": \"2025-01-20\",\n    \"fechaFin\": \"2025-01-25\",\n    \"color\": \"#4CAF50\",\n    \"descripcion\": \"Labrado de campo norte\",\n    \"trabajador_id\": 1,\n    \"maquina_id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{API_BASE_URL}}/cronogramas",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["cronogramas"]
+						},
+						"description": "Crear un nuevo cronograma de trabajo"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Cronograma",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fechaFin\": \"2025-01-27\",\n    \"descripcion\": \"Labrado extendido por condiciones climáticas\"\n}"
+						},
+						"url": {
+							"raw": "{{API_BASE_URL}}/cronogramas/1",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["cronogramas", "1"]
+						},
+						"description": "Actualizar información de un cronograma"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Cronograma",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE_URL}}/cronogramas/1",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["cronogramas", "1"]
+						},
+						"description": "Eliminar un cronograma"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Incidencias",
+			"description": "CRUD de incidencias y reportes",
+			"item": [
+				{
+					"name": "Listar Incidencias",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE_URL}}/incidencias?per_page=15",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["incidencias"],
+							"query": [
+								{
+									"key": "per_page",
+									"value": "15"
+								},
+								{
+									"key": "estado",
+									"value": "abierta",
+									"disabled": true,
+									"description": "Filtrar por estado (abierta, en_progreso, resuelta)"
+								},
+								{
+									"key": "prioridad",
+									"value": "alta",
+									"disabled": true,
+									"description": "Filtrar por prioridad (baja, media, alta)"
+								},
+								{
+									"key": "maquina_id",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "trabajador_id",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Obtener listado paginado de incidencias"
+					},
+					"response": []
+				},
+				{
+					"name": "Ver Incidencia",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE_URL}}/incidencias/1",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["incidencias", "1"]
+						},
+						"description": "Obtener detalles de una incidencia específica"
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Incidencia",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"Fallo en el motor\",\n    \"descripcion\": \"El tractor presenta humo negro al arrancar\",\n    \"estado\": \"abierta\",\n    \"prioridad\": \"alta\",\n    \"fechaApertura\": \"2025-01-15T10:30:00\",\n    \"maquina_id\": 1,\n    \"trabajador_id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{API_BASE_URL}}/incidencias",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["incidencias"]
+						},
+						"description": "Crear una nueva incidencia"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Incidencia",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"estado\": \"resuelta\",\n    \"fechaCierre\": \"2025-01-16T14:00:00\",\n    \"descripcion\": \"Problema resuelto. Se cambió el filtro de combustible\"\n}"
+						},
+						"url": {
+							"raw": "{{API_BASE_URL}}/incidencias/1",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["incidencias", "1"]
+						},
+						"description": "Actualizar información de una incidencia"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Incidencia",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE_URL}}/incidencias/1",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["incidencias", "1"]
+						},
+						"description": "Eliminar una incidencia"
+					},
+					"response": []
+				},
+				{
+					"name": "Estadísticas Incidencias",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE_URL}}/incidencias/stats",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["incidencias", "stats"]
+						},
+						"description": "Obtener estadísticas de incidencias por estado y prioridad"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Asignaciones",
+			"description": "CRUD de asignaciones trabajador-máquina",
+			"item": [
+				{
+					"name": "Listar Asignaciones",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE_URL}}/asignaciones?per_page=15",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["asignaciones"],
+							"query": [
+								{
+									"key": "per_page",
+									"value": "15"
+								},
+								{
+									"key": "trabajador_id",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "maquina_id",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "tipoAsignacion",
+									"value": "permanente",
+									"disabled": true,
+									"description": "temporal o permanente"
+								},
+								{
+									"key": "activas",
+									"value": "true",
+									"disabled": true,
+									"description": "Solo asignaciones activas"
+								}
+							]
+						},
+						"description": "Obtener listado paginado de asignaciones"
+					},
+					"response": []
+				},
+				{
+					"name": "Ver Asignación",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE_URL}}/asignaciones/1",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["asignaciones", "1"]
+						},
+						"description": "Obtener detalles de una asignación específica"
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Asignación",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fechaInicio\": \"2025-01-15\",\n    \"fechaFin\": \"2025-06-30\",\n    \"descripcion\": \"Asignación temporal para temporada de cosecha\",\n    \"tipoAsignacion\": \"temporal\",\n    \"trabajador_id\": 1,\n    \"maquina_id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{API_BASE_URL}}/asignaciones",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["asignaciones"]
+						},
+						"description": "Crear una nueva asignación"
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Asignación Permanente",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fechaInicio\": \"2025-01-15\",\n    \"descripcion\": \"Asignación permanente como operador principal\",\n    \"tipoAsignacion\": \"permanente\",\n    \"trabajador_id\": 1,\n    \"maquina_id\": 2\n}"
+						},
+						"url": {
+							"raw": "{{API_BASE_URL}}/asignaciones",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["asignaciones"]
+						},
+						"description": "Crear una asignación permanente (sin fecha fin)"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Asignación",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fechaFin\": \"2025-07-31\",\n    \"descripcion\": \"Asignación extendida\"\n}"
+						},
+						"url": {
+							"raw": "{{API_BASE_URL}}/asignaciones/1",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["asignaciones", "1"]
+						},
+						"description": "Actualizar información de una asignación"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Asignación",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE_URL}}/asignaciones/1",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["asignaciones", "1"]
+						},
+						"description": "Eliminar una asignación"
+					},
+					"response": []
+				},
+				{
+					"name": "Estadísticas Asignaciones",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE_URL}}/asignaciones/stats",
+							"host": ["{{API_BASE_URL}}"],
+							"path": ["asignaciones", "stats"]
+						},
+						"description": "Obtener estadísticas de asignaciones"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "API_BASE_URL",
+			"value": "http://localhost:8000/api",
+			"type": "string"
+		},
+		{
+			"key": "TOKEN",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
