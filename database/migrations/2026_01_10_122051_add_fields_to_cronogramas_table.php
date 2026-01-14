@@ -15,7 +15,7 @@ return new class extends Migration
             $table->time('horaInicio')->nullable()->after('fechaInicio');
             $table->time('horaFin')->nullable()->after('fechaFin');
             $table->enum('estado', ['pendiente', 'confirmada', 'en_uso', 'completada', 'cancelada'])
-                  ->default('pendiente')->after('descripcion');
+                    ->default('pendiente')->after('descripcion');
         });
     }
 
@@ -28,4 +28,5 @@ return new class extends Migration
             $table->dropColumn(['horaInicio', 'horaFin', 'estado']);
         });
     }
+    
 };

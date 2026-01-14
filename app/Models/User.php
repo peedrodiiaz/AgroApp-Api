@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\UserRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -20,9 +21,11 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'usuario', // Cambiado para coincidir con el frontend
+        'usuario', 
         'email',
         'password',
+        'role'
+        
     ];
 
     /**
@@ -45,8 +48,25 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role'=> UserRole::class,
         ];
     }
+
+    public function isAdmin(): bool
+    {
+        return $this ->role === UserRole::Admin;    
+    }
+
+    public function isUser(): bool
+    {
+        return $this -> role === UserRole::User;
+    }
+
+    public function hasRole(string $role): bool
+    {
+        return $this->role->value === $role;
+    }
+    
 
     /**
      * Get the name of the unique identifier for the user.
@@ -55,7 +75,7 @@ class User extends Authenticatable
      */
     public function getAuthIdentifierName()
     {
-        return 'usuario'; // Usar 'usuario' en vez de 'email' para autenticación
+        return 'usuario'; 
     }
 
     /**

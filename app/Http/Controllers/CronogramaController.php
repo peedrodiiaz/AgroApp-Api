@@ -181,11 +181,11 @@ class CronogramaController extends Controller
             ->whereIn('estado', ['pendiente', 'confirmada', 'en_uso'])
             ->where(function($q) use ($fechaInicio, $fechaFin) {
                 $q->whereBetween('fechaInicio', [$fechaInicio, $fechaFin])
-                  ->orWhereBetween('fechaFin', [$fechaInicio, $fechaFin])
-                  ->orWhere(function($q2) use ($fechaInicio, $fechaFin) {
-                      $q2->where('fechaInicio', '<=', $fechaInicio)
-                         ->where('fechaFin', '>=', $fechaFin);
-                  });
+                    ->orWhereBetween('fechaFin', [$fechaInicio, $fechaFin])
+                    ->orWhere(function($q2) use ($fechaInicio, $fechaFin) {
+                        $q2->where('fechaInicio', '<=', $fechaInicio)
+                            ->where('fechaFin', '>=', $fechaFin);
+                    });
             });
 
         if ($excluirId) {
@@ -217,11 +217,11 @@ class CronogramaController extends Controller
             ->whereIn('estado', ['pendiente', 'confirmada', 'en_uso'])
             ->where(function($q) use ($request) {
                 $q->whereBetween('fechaInicio', [$request->fechaInicio, $request->fechaFin])
-                  ->orWhereBetween('fechaFin', [$request->fechaInicio, $request->fechaFin])
-                  ->orWhere(function($q2) use ($request) {
-                      $q2->where('fechaInicio', '<=', $request->fechaInicio)
-                         ->where('fechaFin', '>=', $request->fechaFin);
-                  });
+                    ->orWhereBetween('fechaFin', [$request->fechaInicio, $request->fechaFin])
+                    ->orWhere(function($q2) use ($request) {
+                        $q2->where('fechaInicio', '<=', $request->fechaInicio)
+                            ->where('fechaFin', '>=', $request->fechaFin);
+                    });
             });
 
         if ($request->has('maquina_id')) {
