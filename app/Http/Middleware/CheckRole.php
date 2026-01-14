@@ -3,9 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\Request;
-use PhpParser\Node\Expr\Cast\String_;
 use Symfony\Component\HttpFoundation\Response;
 
 class CheckRole
@@ -15,20 +13,27 @@ class CheckRole
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle (Request $request, Closure $next, String ...$roles):
-    Response {
+    public function handle(Request $request, Closure $next, string ...$roles): Response
+    {
         $user = $request->user();
-        if (!$user){
-            return response()-> json([
-                'message' => 'Usuario no autenticado'
-            ]);
-        }
-        $allowedRoles = array_map(fn($role) => strtolower($role), $roles);
-
-        if (!in_array($user->email, $allowedRoles, true)) {
+        
+        if (!$user) {
             return response()->json([
-                'message' => 'Acceso no autorizado para el rol de usuario actual.'
+                'success' => false,
+                'message' => 'Usuario no autenticado'
+            ], 401);
+        }
+
+        $allowedRoles = array_map(fn($role) => strtolower($role), $roles);
+        $userRole = strtolower($user->role->value);
+
+        if (!in_array($userRole, $allowedRoles, true)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Acceso no autorizado. Tu rol no tiene permisos para esta acción.'
             ], 403);
         }
+
+        return $next($request);
     }
 }

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use App\UserRole;
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
@@ -13,19 +14,22 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Usuario de prueba
+        // Usuario administrador
         User::create([
             'name' => 'Administrador',
             'usuario' => 'admin',
             'email' => 'admin@agroapp.com',
-            'password' => Hash::make('12345678'), // Contraseña: 12345678
+            'password' => Hash::make('12345678'),
+            'role' => UserRole::Admin,
         ]);
 
+        // Usuario de prueba
         User::create([
             'name' => 'Usuario Demo',
             'usuario' => 'demo',
             'email' => 'demo@agroapp.com',
             'password' => Hash::make('12345678'),
+            'role' => UserRole::User,
         ]);
     }
 }
